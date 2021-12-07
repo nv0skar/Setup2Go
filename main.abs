@@ -1,0 +1,100 @@
+# Setup2Go
+# Copyright (C) 2021 ItsTheGuy
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#!/usr/bin/env abs
+
+cli = require('@cli')
+
+brewPackages2Install = ["git", "wget", "watch", "gnupg", "gh", "bottom", "kalker", "dust", "pyenv", "vlang", "deno", "httpie", "dtool", "ffmpeg", "vim", "romkatv/powerlevel10k/powerlevel10k"] # List of brew packages to install
+brewCasks2Install = ["iterm2", "firefox", "visual-studio-code", "tunnelblick", "lulu"] # List of brew casks to install
+files2OverrideFolderName = "Files2Override"
+
+# This will install all of the specified packages with some extra programs
+f installPackages(packageList) {
+    for package in packageList {
+        echo("🍺 Installing $package...")
+        exec("/usr/bin/env brew install $package")
+    }
+    echo("🦀 Installing rustup...")
+    exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh") # Install rustup
+    echo("🛸 Installing cheat.sh ...")
+    cheat_sh_InstallationDir = "/usr/local/bin/help"
+    exec("curl https://cht.sh/:cht.sh | sudo tee $cheat_sh_InstallationDir")
+    echo("(cheat.sh was installed as $cheat_sh_InstallationDir)")
+}
+
+# This will install all of the specified casks
+f installCasks(casksList) {
+    for cask in casksList {
+        echo("🍺 Installing $cask...")
+        exec("/usr/bin/env brew install --cask $cask")
+    }
+}
+
+# Configure zsh and other stuff
+f configureZsh() {
+    homeDir = env("HOME") # Get home directory
+    homeZshFiles = ["zshrc", "zprofile", "zshenv", "p10k.zsh"] # Name of zsh related files to copy
+    echo("🗄 Creating .hushlogin file")
+    exec("/usr/bin/env touch $homeDir/.hushlogin") # Create .hushlogin in home directory
+    echo("💫 Copying .zshrc, .zprofile, .zshenv, .p10k.zsh")
+    for homeZshFile in homeZshFiles {
+        echo("📄 Placing ./$files2OverrideFolderName/$homeZshFile.txt as $homeDir/.$homeZshFile")
+        exec("/bin/cp ./$files2OverrideFolderName/$homeZshFile.txt $homeDir/.$homeZshFile") # Copying zsh related files to home directory
+    }
+
+}
+
+@cli.cmd("letsGo", "start the setup process", {})
+f go(arguments, flags) {
+    if (`sw_vers -productNamee` != "macOS") { # Check the OS
+        echo("Opps! This is not macOS 🐙 ")
+        echo("Some packages that this script will install may not be available in other OSs 😓")
+        exit(1)
+    }
+    if (env("ZSH_NAME") != "zsh") { # Detect shell
+        echo("Oh! Your shell is not zsh 😱 ")
+        echo("Make sure you have zsh installed and configured as your shell 🐢")
+        exit(1)
+    }
+    if (`whoami` == "root") { # Check if running as root
+        echo("Oh no! You're running this as root 😱 ")
+        echo("Bring down your permissions and try again 😌")
+        exit(1)
+    }
+    echo("The checklist was completed, are you sure you want to continue? 🚀 [Type: 'Yes' or any other thing if you want to exit]: ")
+    shallGo = stdin()
+    if (shallGo != "Yes") {
+        exit(0)
+    }
+    echo("Setup in the ItsTheGuy's flavour initialized 🧪") # Print some message to inform that the setup was initialized
+    echo("⚠️ You may be asked for configuration by some programs") # Print some message that the setup was initialized
+    echo("🍺 Installing brew...")
+    exec("/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'") # Install brew
+    installPackages(brewPackages2Install)
+    installCasks(brewCasks2Install)
+    configureZsh()
+    echo("Setup is done 🎉\nNow is your turn to finish customizing your system 👽") # Print some message to inform that the setup finished
+}
+
+@cli.cmd("what", "check out what's actually doing Setup2Go", {})
+f what(arguments, flags) {
+    echo("This script will configure macOS in the ItsTheGuy's style 💫")
+    echo("Essentially this will install packages and apps and configure other stuff.")
+    echo("You can always check out the script code to figure out what's actally doing in depth!")
+}
+
+cli.run()
