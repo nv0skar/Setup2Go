@@ -14,7 +14,6 @@ This script will install brew and, after that, the following stuff:
 - `git`
 - `wget`
 - `watch`
-- `gnupg`
 - `gh`
 - `bottom`
 - `kalker`
@@ -24,14 +23,10 @@ This script will install brew and, after that, the following stuff:
 - `deno`
 - `httpie`
 - `dtool`
-- `ffmpeg`
 - `vim`
-- `powelevel10k` (`romkatv/powerlevel10k/powerlevel10k`)
 - `iterm2` **`Cask`**
-- `firefox` **`Cask`**
 - `visual-studio-code` **`Cask`**
 - `tunnelblick` **`Cask`**
-- `lulu` **`Cask`**
 
 It will also copy a custom `.zshrc`, `.zprofile`, `.zshenv`, `.p10k.zsh` files and create a `.hushlogin` file in the home directory
 
