@@ -18,8 +18,8 @@
 
 cli = require('@cli')
 
-brewPackages2Install = ["git", "wget", "watch", "gnupg", "gh", "bottom", "kalker", "dust", "pyenv", "vlang", "deno", "httpie", "dtool", "ffmpeg", "vim", "romkatv/powerlevel10k/powerlevel10k"] # List of brew packages to install
-brewCasks2Install = ["iterm2", "firefox", "visual-studio-code", "tunnelblick", "lulu"] # List of brew casks to install
+brewPackages2Install = ["git", "wget", "watch", "gh", "bottom", "kalker", "dust", "pyenv", "vlang", "deno", "httpie", "dtool", "vim"] # List of brew packages to install
+brewCasks2Install = ["iterm2", "visual-studio-code", "tunnelblick"] # List of brew casks to install
 files2OverrideFolderName = "Files2Override"
 
 # This will install all of the specified packages with some extra programs
@@ -31,9 +31,10 @@ f installPackages(packageList) {
     echo("🦀 Installing rustup...")
     exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh") # Install rustup
     echo("🛸 Installing cheat.sh ...")
-    cheat_sh_InstallationDir = "/usr/local/bin/help"
-    exec("curl https://cht.sh/:cht.sh | sudo tee $cheat_sh_InstallationDir")
-    echo("(cheat.sh was installed as $cheat_sh_InstallationDir)")
+    cheat_sh_Installation = ["/opt/cheatsh/bin", "help"]
+    cheat_sh_InstallationFullPath = cheat_sh_Installation[0] + "/" + cheat_sh_Installation[1]
+    exec("sudo mkdir -p " + cheat_sh_Installation[0] + " && curl https://cht.sh/:cht.sh | sudo tee $cheat_sh_InstallationFullPath && sudo chmod +x $cheat_sh_InstallationFullPath")
+    echo("(cheat.sh was installed at $cheat_sh_InstallationFullPath)")
 }
 
 # This will install all of the specified casks
@@ -60,28 +61,29 @@ f configureZsh() {
 
 @cli.cmd("letsGo", "start the setup process", {})
 f go(arguments, flags) {
-    if (`sw_vers -productNamee` != "macOS") { # Check the OS
-        echo("Opps! This is not macOS 🐙 ")
+    if (`sw_vers -productName` != "macOS") { # Check the OS
+        echo("Opps! This is not macOS 🐙")
         echo("Some packages that this script will install may not be available in other OSs 😓")
         exit(1)
     }
     if (env("ZSH_NAME") != "zsh") { # Detect shell
-        echo("Oh! Your shell is not zsh 😱 ")
-        echo("Make sure you have zsh installed and configured as your shell 🐢")
-        exit(1)
+        echo("Oh! Your shell is not zsh 😱")
+        echo("Or maybe the script couldn't determine it correctly...")        
+        echo("However you can proceed the installation. Take note that for certain functionalities to work, zsh must be your shell 🥲")
+        echo("Are you sure you want to continue? 🧐 [Type: 'Yes' if you want to continue, if not, type any other thing]: ")
+        shallContinue = stdin()
+        if (shallContinue != "Yes") { exit(0) }
     }
     if (`whoami` == "root") { # Check if running as root
-        echo("Oh no! You're running this as root 😱 ")
+        echo("Oh no! You're running this as root 😱")
         echo("Bring down your permissions and try again 😌")
         exit(1)
     }
-    echo("The checklist was completed, are you sure you want to continue? 🚀 [Type: 'Yes' or any other thing if you want to exit]: ")
+    echo("The checklist was completed, are you sure you want to continue? 🚀 [Type: 'Yes' if you want to continue, if not, type any other thing]: ")
     shallGo = stdin()
-    if (shallGo != "Yes") {
-        exit(0)
-    }
+    if (shallGo != "Yes") { exit(0) }
     echo("Setup in the ItsTheGuy's flavour initialized 🧪") # Print some message to inform that the setup was initialized
-    echo("⚠️ You may be asked for configuration by some programs") # Print some message that the setup was initialized
+    echo("⚠️ You may be asked for settings by some programs") # Print some message that the setup was initialized
     echo("🍺 Installing brew...")
     exec("/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'") # Install brew
     installPackages(brewPackages2Install)

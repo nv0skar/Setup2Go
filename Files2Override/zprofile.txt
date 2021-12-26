@@ -1,22 +1,29 @@
-# Setting pyenv
+# Setting up Homebrew
+# eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Setting up pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 
-# Set the path of the homdir of gnupg
+# Set the gnupg's homedir
 export GNUPGHOME="$HOME/Keys/"
 
-# Setting gnupg
+# Setting up gnupg
 export GPG_TTY=$(tty)
 
 # Setting path for VSCode
 export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:${PATH}"
 
-# Setting Deno path
-export DENO_INSTALL="$HOME/.deno"
+# Setting Deno's path
+export DENO_INSTALL="/Users/itstheguy/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 
-# Setting to abs
+# Setting up abs
+# export PATH="/opt/abs/bin:$PATH"
 export ABS_HISTORY_FILE="/dev/null"
 export ABS_MAX_HISTORY_LINES=0
 export ABS_PROMPT_PREFIX=">"
+
+# Setting up cheat.sh's path
+export PATH="/opt/cheatsh/bin:${PATH}"

@@ -28,22 +28,16 @@ systemPrefs()
     open -b com.apple.systempreferences
 }
 
-## Open Firefox
-openFirefox()
+## Open Safari
+openSafari()
 {
-   open -b org.mozilla.firefox
+   open -b com.apple.Safari
 }
 
 ## Open Spotify
-openSpotify() 
+openSpotify()
 {
     open -b com.spotify.client
-}
-
-## Open LuLu
-firewall()
-{
-    open -b com.objective-see.lulu.app
 }
 
 ## Wifi toggle
